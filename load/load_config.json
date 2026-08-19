@@ -1,0 +1,68 @@
+{
+  "_comment": "Central tunables for the Q-GPT Locust rig. Every capacity-calculator knob lives here so retuning never touches code. Values marked TODO are placeholders (Onyx defaults / assumptions) to confirm against staging before the first real run.",
+
+  "host": "https://qgpt-staging.qbadvisory.com",
+  "_host_note": "API host only. The functional suite's base_url ends in /app, which is the SPA frontend; the REST API is served from the root /api. TODO CONFIRM.",
+
+  "auth": {
+    "mode": "session",
+    "_mode_note": "'session' = POST credentials, reuse the returned cookie. 'api_key' = send a static bearer token (Onyx supports API keys). TODO CONFIRM which staging accepts.",
+    "login_path": "/api/auth/login",
+    "username_env": "QGPT_LOAD_USER",
+    "password_env": "QGPT_LOAD_PASSWORD",
+    "api_key_env": "QGPT_LOAD_API_KEY",
+    "_creds_note": "Credentials come from environment variables, never committed here. Falls back to data/input_data.json valid_login only if the env vars are unset (dev convenience)."
+  },
+
+  "model": {
+    "stub_model": true,
+    "stub_model_name": "qgpt-loadtest-stub",
+    "real_model_name": "GPT-5.5 Pro",
+    "_note": "When stub_model is true the send payload requests stub_model_name so you measure YOUR infra, not OpenRouter latency/cost. The backend must map that name to a cheap/mock model. TODO CONFIRM the mechanism (model override field vs. header)."
+  },
+
+  "pacing": {
+    "wait_min_seconds": 3,
+    "wait_max_seconds": 12,
+    "_note": "Think-time between a user's prompts. Tune to the real per-session prompt cadence for S01 baseline-sessions realism."
+  },
+
+  "timeouts": {
+    "connect_seconds": 15,
+    "stream_hold_seconds": 420,
+    "_stream_note": "Max time to hold a streamed reply open. Observed range in the functional run was 10s..391s, so 420s leaves headroom. Feeds S08 held-stream duration."
+  },
+
+  "mix_percent": {
+    "_note": "S12 mix table. Used directly as Locust task weights. Should sum to ~100. TODO ALIGN with the real mix table before drawing capacity conclusions.",
+    "stateless_prompt": 45,
+    "conversation_prompt": 20,
+    "rag_document_query": 20,
+    "ingest_light": 8,
+    "ingest_heavy": 2,
+    "agentic_mcp_prompt": 5
+  },
+
+  "scenario_params": {
+    "conversation_turns": 6,
+    "_conversation_note": "S02 conversation-history multiplier: turns replayed in one session to amplify input tokens.",
+
+    "light_file_bytes": 51200,
+    "heavy_file_bytes": 5242880,
+    "_file_note": "S04/S05 average file size per prompt (light ~50KB, heavy ~5MB). TODO ALIGN with real corpus.",
+
+    "rag_top_k": 5,
+    "_rag_note": "S03 retrieved chunks per prompt; drives RAG context tokens and vector-search QPS.",
+
+    "agentic_expected_calls": 3,
+    "_agentic_note": "S06/S07 expected MCP/tool calls per agentic prompt. Observed 1..17 in the functional run, so treat as a distribution, not a constant."
+  },
+
+  "endpoints": {
+    "_note": "Onyx (formerly Danswer) default API surface. EVERY path here is a placeholder to confirm via a browser Network capture on staging (send one prompt, upload one file, run one doc query).",
+    "create_chat_session": "/api/chat/create-chat-session",
+    "send_message": "/api/chat/send-message",
+    "file_upload": "/api/chat/file",
+    "document_search": "/api/query/search"
+  }
+}

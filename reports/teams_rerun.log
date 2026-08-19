@@ -1,0 +1,138 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.5, pytest-9.0.3, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.5', 'Platform': 'Windows-11-10.0.26200-SP0', 'Packages': {'pytest': '9.0.3', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.13.0', 'locust': '2.44.3', 'base-url': '2.1.0', 'html': '4.2.0', 'metadata': '3.1.1', 'playwright': '0.8.0', 'xdist': '3.8.0'}, 'JAVA_HOME': 'C:\\Program Files\\Java\\jre1.8.0_451\\bin', 'Base URL': ''}
+rootdir: D:\QGPT\Qgpt
+configfile: pytest.ini
+plugins: anyio-4.13.0, locust-2.44.3, base-url-2.1.0, html-4.2.0, metadata-3.1.1, playwright-0.8.0, xdist-3.8.0
+collecting ... collected 27 items / 17 deselected / 10 selected
+
+tests/test_teams_feature.py::test_teams_capability[channel__list_teams] PASSED [ 10%]
+tests/test_teams_feature.py::test_teams_capability[channel__list_channels] PASSED [ 20%]
+tests/test_teams_feature.py::test_teams_capability[channel__send_channel_message] PASSED [ 30%]
+tests/test_teams_feature.py::test_teams_capability[channel__send_message_with_mention] PASSED [ 40%]
+tests/test_teams_feature.py::test_teams_capability[channel__update_channel_message] FAILED [ 50%]
+tests/test_teams_feature.py::test_teams_capability[channel__delete_channel_message] PASSED [ 60%]
+tests/test_teams_feature.py::test_teams_capability[channel__set_message_reaction] PASSED [ 70%]
+tests/test_teams_feature.py::test_teams_capability[channel__unset_message_reaction] PASSED [ 80%]
+tests/test_teams_feature.py::test_teams_capability[chat__list_chats] PASSED [ 90%]
+tests/test_teams_feature.py::test_teams_capability[meeting__list_meeting_attendance] FAILED [100%]
+
+================================== FAILURES ===================================
+___________ test_teams_capability[channel__update_channel_message] ____________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000002B8F8CAA3C0>
+scenario = {'capability': 'update-channel-message', 'category': 'Channel Operations', 'expect_any': ['edit', 'updated', 'changed', 'hello', 'which message', 'which one', ...], 'name': 'channel__update_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+            pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+    
+        response = agent_page.get_response_text() or ""
+        if not response.strip():
+            _record_result(scenario, "EMPTY", "Empty response")
+            pytest.fail(f"[{scenario['capability']}] Agent returned an empty response")
+    
+        lowered = response.lower()
+    
+        hit_fail = next((m for m in fail_markers if m.lower() in lowered), None)
+        if hit_fail is not None:
+            _record_result(scenario, "FAIL_MARKER", f"marker: {hit_fail}", response)
+>           pytest.fail(
+                f"[{scenario['capability']}] Agent reply signals failure "
+                f"('{hit_fail}') for query {query!r}, got: {response!r}"
+            )
+E           Failed: [update-channel-message] Agent reply signals failure ('i couldn't') for query 'Can you edit a message I previously sent "hello" to the QBA-ADM QA group?', got: 'Thought for 5s3 stepsLet me first retrieve the recent messages from the QBA-ADM QA General channel to find your "hello" message.I retrieved the recent messages from the QBA-ADM QA General channel, but I couldn\'t find a message with the content "hello" sent by you. Here are the messages you\'ve recently sent to that channel:\n#Message IDContentDate11786704524824Hi this is the test message @Souvik BeheraAug 14, 202621786704509476This is a test messageAug 14, 202631786688219667This is a test messageAug 14, 202641786638528220Hi this is the test message @Souvik BeheraAug 13, 202651786638370965This is a test messageAug 13, 2026\nCould you clarify which message you\'d like to edit, and what you\'d like to change it to? Or if "hello" was sent to a different channel, let me know and I can look there instead.✓ z-ai/glm-5.2⏱ 4319 ms4:19 PMGLM 5.2'
+
+tests\test_teams_feature.py:132: Failed
+___________ test_teams_capability[meeting__list_meeting_attendance] ___________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000002B8F8CAA3C0>
+scenario = {'capability': 'list-meeting-attendance', 'category': 'Meeting Operations', 'expect_any': ['attendance', 'report', 'meeting', 'no attendance'], 'name': 'meeting__list_meeting_attendance', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+            pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+    
+        response = agent_page.get_response_text() or ""
+        if not response.strip():
+            _record_result(scenario, "EMPTY", "Empty response")
+            pytest.fail(f"[{scenario['capability']}] Agent returned an empty response")
+    
+        lowered = response.lower()
+    
+        hit_fail = next((m for m in fail_markers if m.lower() in lowered), None)
+        if hit_fail is not None:
+            _record_result(scenario, "FAIL_MARKER", f"marker: {hit_fail}", response)
+>           pytest.fail(
+                f"[{scenario['capability']}] Agent reply signals failure "
+                f"('{hit_fail}') for query {query!r}, got: {response!r}"
+            )
+E           Failed: [list-meeting-attendance] Agent reply signals failure ('i couldn't') for query 'Can you get the attendance report for the QBA-ADM QA Test Meeting?', got: 'Thought for 10s4 stepsI searched through your calendar events from July 1 to August 31, 2026, but I couldn\'t find a meeting titled "QBA-ADM QA Test Meeting".\nHere are some of the meetings I did find on your calendar:\n#Meeting NameDateTime1Sprint-19 ReviewAug 14, 20269:00 AM – 10:00 AM2TM - Internal DiscussionAug 14, 20267:30 AM – 8:00 AM3TM PCDS Platform-Daily StandupAug 13, 20269:30 AM – 10:00 AM4QGPT - Discussion related to in-scope feature for the regression suiteAug 12, 20264:30 AM – 5:30 AM5arQuon Product Development daily standupAug 12, 20266:30 AM – 7:00 AM6QGPT Testing DemoAug 6, 20265:30 AM – 6:00 AM7Testing Approach for Product Development CycleAug 4, 20265:00 AM – 5:30 AM\nCould you double-check the exact meeting name? Or if you can share the meeting join URL, I can use that to look up the meeting details and retrieve the attendance report directly.✓ z-ai/glm-5.2⏱ 9867 ms4:20 PMGLM 5.2'
+
+tests\test_teams_feature.py:132: Failed
+------- Generated html report: file:///D:/QGPT/Qgpt/reports/report.html -------
+=========================== short test summary info ===========================
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__update_channel_message]
+FAILED tests/test_teams_feature.py::test_teams_capability[meeting__list_meeting_attendance]
+=========== 2 failed, 8 passed, 17 deselected in 224.32s (0:03:44) ============

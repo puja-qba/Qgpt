@@ -1,0 +1,289 @@
+<title>Q-GPT Test Report</title>
+<style>
+  :root {
+    --ground: #f6f7f9; --surface: #ffffff; --surface-2: #f0f2f5;
+    --ink: #191c22; --muted: #5f6976; --faint: #8a94a2;
+    --border: #e3e7ec; --border-strong: #d3d9e0; --accent: #345a94;
+    --pass: #12805c; --pass-bg: #e6f4ee; --fail: #cf3546; --fail-bg: #fbe9eb;
+    --clarify: #9a6a12; --clarify-bg: #f6efdd;
+    --head-a: #d8394a; --head-b: #b0283a; --on-head: #ffffff; --on-head-dim: rgba(255,255,255,.82);
+    --shadow: 0 1px 2px rgba(20,25,35,.05), 0 6px 20px rgba(20,25,35,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #13151a; --surface: #1b1e25; --surface-2: #232732;
+      --ink: #e7eaee; --muted: #9aa4b2; --faint: #6f7887;
+      --border: #2b303a; --border-strong: #3a404c; --accent: #7ea3dc;
+      --pass: #37cc8d; --pass-bg: rgba(55,204,141,.13); --fail: #f3606f; --fail-bg: rgba(243,96,111,.14);
+      --clarify: #d9ab5b; --clarify-bg: rgba(217,171,91,.13);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #13151a; --surface: #1b1e25; --surface-2: #232732;
+    --ink: #e7eaee; --muted: #9aa4b2; --faint: #6f7887;
+    --border: #2b303a; --border-strong: #3a404c; --accent: #7ea3dc;
+    --pass: #37cc8d; --pass-bg: rgba(55,204,141,.13); --fail: #f3606f; --fail-bg: rgba(243,96,111,.14);
+    --clarify: #d9ab5b; --clarify-bg: rgba(217,171,91,.13);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 28px 20px 72px; }
+  .banner { background: linear-gradient(135deg, var(--head-a), var(--head-b)); color: var(--on-head);
+    border-radius: 14px; padding: 26px 30px; box-shadow: var(--shadow); }
+  .banner h1 { margin: 0; font-size: clamp(1.35rem, 2.4vw, 1.9rem); font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+  .banner .meta { margin-top: 8px; font-size: .92rem; color: var(--on-head-dim);
+    display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+  .banner .meta strong { color: var(--on-head); font-weight: 700; letter-spacing: .02em; }
+  .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--on-head-dim); display: inline-block; }
+  .tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 18px; box-shadow: var(--shadow); }
+  .tile { background: var(--surface); padding: 20px 16px; text-align: center; }
+  .tile .num { font-size: clamp(1.7rem, 3.6vw, 2.5rem); font-weight: 700; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums; line-height: 1; }
+  .tile .lbl { margin-top: 8px; font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
+    color: var(--muted); font-weight: 600; }
+  .tile.pass .num { color: var(--pass); }
+  .tile.fail .num { color: var(--fail); }
+  @media (max-width: 720px) {
+    .tiles { grid-template-columns: repeat(3, 1fr); }
+    .tile:nth-child(4), .tile:nth-child(5) { border-top: 1px solid var(--border); }
+  }
+  .sec-title { display: flex; align-items: center; gap: 10px; margin: 34px 0 14px;
+    font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
+  .sec-title .mark { color: var(--fail); font-size: 1.05rem; }
+  .callout { border: 1px solid var(--border); border-left: 3px solid var(--fail); background: var(--surface);
+    border-radius: 10px; padding: 4px 0; box-shadow: var(--shadow); overflow: hidden; }
+  .fail-row { display: grid; grid-template-columns: 210px 1fr; gap: 4px 22px; padding: 16px 20px; }
+  .fail-row + .fail-row { border-top: 1px solid var(--border); }
+  .fail-row .who { font-weight: 600; }
+  .fail-row .who .cap { display: block; font-family: "Cascadia Code", Consolas, monospace; font-size: .78rem;
+    color: var(--muted); font-weight: 500; margin-top: 3px; }
+  .fail-row .why .q { color: var(--ink); }
+  .fail-row .why .q em { color: var(--muted); font-style: normal; }
+  .marker { font-family: "Cascadia Code", Consolas, monospace; font-size: .78rem; background: var(--fail-bg);
+    color: var(--fail); padding: 1px 7px; border-radius: 5px; white-space: nowrap; }
+  .fail-row .note { color: var(--muted); font-size: .9rem; margin-top: 6px; }
+  @media (max-width: 640px) { .fail-row { grid-template-columns: 1fr; } }
+  .feature { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden; margin-top: 16px; }
+  .feature-head { display: flex; align-items: center; gap: 16px; padding: 15px 20px;
+    border-bottom: 1px solid var(--border); background: var(--surface-2); }
+  .feature-head h3 { margin: 0; font-size: 1rem; font-weight: 700; flex: 0 0 auto; letter-spacing: -.01em; }
+  .meter { flex: 1 1 auto; height: 7px; border-radius: 4px; background: var(--fail); overflow: hidden;
+    min-width: 80px; max-width: 340px; }
+  .meter > span { display: block; height: 100%; background: var(--pass); border-radius: 4px; }
+  .ratio { flex: 0 0 auto; font-size: .82rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .ratio b { color: var(--ink); }
+  .ratio.all-pass b, .ratio.all-pass { color: var(--pass); }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  thead th { text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--muted); font-weight: 600; padding: 10px 20px; border-bottom: 1px solid var(--border); }
+  tbody td { padding: 12px 20px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.is-fail td:first-child { box-shadow: inset 3px 0 0 var(--fail); }
+  .cap { font-family: "Cascadia Code", Consolas, monospace; font-size: .8rem; color: var(--ink); }
+  .result { color: var(--muted); }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: .72rem; font-weight: 700;
+    padding: 3px 9px; border-radius: 999px; letter-spacing: .02em; white-space: nowrap; }
+  .pill.pass { color: var(--pass); background: var(--pass-bg); }
+  .pill.fail { color: var(--fail); background: var(--fail-bg); }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .colcap { width: 34%; }
+  .colst { width: 92px; }
+  @media (max-width: 640px) {
+    thead { display: none; }
+    tbody td { display: block; border-bottom: none; padding: 4px 18px; }
+    tbody tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; }
+    .colcap { width: auto; }
+  }
+  footer { margin-top: 34px; color: var(--faint); font-size: .82rem; line-height: 1.7; }
+  footer code { font-family: "Cascadia Code", Consolas, monospace; font-size: .78rem; color: var(--muted); }
+  .table-scroll { overflow-x: auto; }
+</style>
+
+<div class="wrap">
+
+  <div class="banner">
+    <h1>Q-GPT — Automated Test Report</h1>
+    <div class="meta">
+      <span>Tuesday, 18 August 2026</span>
+      <span class="dot"></span>
+      <span>Overall: <strong>FAILED</strong></span>
+      <span class="dot"></span>
+      <span>Model under test: <strong>Not pinned</strong></span>
+      <span class="dot"></span>
+      <span>Environment: <strong>qgpt-staging</strong></span>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="num">55</div><div class="lbl">Total</div></div>
+    <div class="tile pass"><div class="num">50</div><div class="lbl">Passed</div></div>
+    <div class="tile fail"><div class="num">5</div><div class="lbl">Failed</div></div>
+    <div class="tile"><div class="num">0</div><div class="lbl">Skipped</div></div>
+    <div class="tile"><div class="num">13m&nbsp;50s</div><div class="lbl">Duration</div></div>
+  </div>
+
+  <div class="sec-title"><span class="mark">✕</span> Failed Tests</div>
+  <div class="callout">
+    <div class="fail-row">
+      <div class="who">Agent Query<span class="cap">compound_interest</span></div>
+      <div class="why">
+        <div class="q">assert &#x27;1210&#x27; in &quot;Total value after 2 years = $1,210 💰\nUsing the compound interest formula:\nA = P(1 + r)^t = 1000 \\times (1 + 0.10)^2 = 1000 \\times 1.21 = \\\\$1{,}210\nYear-by-year breakdown:\nYearStartInterest (10%)End1$1,000$100$1,10… <span class="marker">fail</span></div>
+      </div>
+    </div>
+    <div class="fail-row">
+      <div class="who">Teams Feature<span class="cap">update-channel-message</span></div>
+      <div class="why">
+        <div class="q">Reply tripped the failure phrase “i couldn&#x27;t”. Agent said: “Thought for 5s1 stepI checked the recent messages in the QBA-ADM QA General channel, but I couldn&#x27;t find a message with the exact content &quot;hello&quot; sent by you. Here are the messages you&#x27;ve sent recently in that channel: #MessageDate1&quot;Hi this…” <span class="marker">fail</span></div>
+      </div>
+    </div>
+    <div class="fail-row">
+      <div class="who">Teams Feature<span class="cap">get-meeting-details</span></div>
+      <div class="why">
+        <div class="q">Reply tripped the failure phrase “i couldn&#x27;t”. Agent said: “Thought for 4s2 stepsI looked through your upcoming meetings (Aug 18–25), but I couldn&#x27;t find one explicitly named &quot;QA meeting&quot;. 🤔 Here are the closest candidates — could you let me know which one you meant? #MeetingDate &amp; Time1DevOps statu…” <span class="marker">fail</span></div>
+      </div>
+    </div>
+    <div class="fail-row">
+      <div class="who">Teams Feature<span class="cap">list-meeting-recordings</span></div>
+      <div class="why">
+        <div class="q">Reply tripped the failure phrase “i couldn&#x27;t”. Agent said: “Thought for 5s1 stepI checked your upcoming meetings (Aug 18–25), but I couldn&#x27;t find one explicitly named &quot;QA meeting&quot;. 🤔 Here are the closest candidates — could you let me know which one you meant? #MeetingDate &amp; Time1DevOps status &amp; upda…” <span class="marker">fail</span></div>
+      </div>
+    </div>
+    <div class="fail-row">
+      <div class="who">Teams Feature<span class="cap">list-meeting-attendance</span></div>
+      <div class="why">
+        <div class="q">Reply tripped the failure phrase “i couldn&#x27;t”. Agent said: “Thought for 4s1 stepI checked your upcoming meetings (Aug 18–25), but I couldn&#x27;t find one named &quot;QBA-ADM QA Test Meeting&quot;. 🤔 Here are the closest candidates — could you let me know which one you meant? #MeetingDate &amp; Time1DevOps status &amp; up…” <span class="marker">fail</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Results by Suite</div>
+
+  <div class="feature">
+    <div class="feature-head">
+      <h3>Login</h3>
+      <div class="meter"><span style="width:100%"></span></div>
+      <div class="ratio all-pass"><b>5</b> / 5 passed</div>
+    </div>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th class="colst">Status</th><th class="colcap">Test</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">valid login</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">invalid username login</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">without username login</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">invalid password login</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">without password login</span></td><td class="result">Passed.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-head">
+      <h3>Agent Query</h3>
+      <div class="meter"><span style="width:95.45%"></span></div>
+      <div class="ratio"><b>21</b> / 22 passed</div>
+    </div>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th class="colst">Status</th><th class="colcap">Test</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">percentage_calculation</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">average_speed_word_problem</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">multi_step_arithmetic</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">date_reasoning</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">factual_capital</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">multi_step_word_problem</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">number_sequence</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">syllogism_reasoning</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">unit_conversion</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">roman_numeral</span></td><td class="result">Passed.</td></tr>
+        <tr class="is-fail"><td><span class="pill fail">FAIL</span></td><td><span class="cap">compound_interest</span></td><td class="result">assert &#x27;1210&#x27; in &quot;Total value after 2 years = $1,210 💰\nUsing the compound interest formula:\nA = P(1 + r)^t = 1000 \\times (1 + 0.10)^2 = 1000 \\times 1.21 = \\\\$1{,}210\nYear-by-year breakdown:\nYearStartInterest (10%)End1$1,000$100$1,10…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">sum_of_integers</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">http_status_not_found</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">https_default_port</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">decimal_to_hex</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">decimal_to_binary</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">sql_remove_all_rows</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">binary_search_complexity</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">python_list_type</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">oop_hiding_details</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">lifo_data_structure</span></td><td class="result">Passed.</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">git_history_command</span></td><td class="result">Passed.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-head">
+      <h3>Teams Feature</h3>
+      <div class="meter"><span style="width:85.19%"></span></div>
+      <div class="ratio"><b>23</b> / 27 passed</div>
+    </div>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th class="colst">Status</th><th class="colcap">Capability</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">list-teams</span></td><td class="result">Thought for 5s3 stepsHere are all the Microsoft Teams groups you&#x27;re a member of — 10 teams in total: #Team NameDescription1Qutilize &amp; Self-ServeQutilize and Self Serve project communication goes here2…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">list-channels</span></td><td class="result">Thought for 11s13 stepsHere&#x27;s a complete list of all channels across your 10 Teams: 1. Qutilize &amp; Self-Serve (1 channel) General 2. QBA-ADM QA (1 channel) General 3. QBA Lux-AMCorporate-DOT NET Suppor…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">send-channel-message</span></td><td class="result">Thought for 12s5 steps✅ Message sent successfully! Your message &quot;This is a test message&quot; has been posted to the General channel in the QBA-ADM QA team. Team: QBA-ADM QA Channel: General Message ID: 17…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">send-channel-message-with-mention</span></td><td class="result">Thought for 6s2 steps✅ Message sent successfully with mention! Your message has been posted to the General channel in the QBA-ADM QA team: Message: &quot;Hi this is the test message @Souvik Behera&quot; Mention…</td></tr>
+        <tr class="is-fail"><td><span class="pill fail">FAIL</span></td><td><span class="cap">update-channel-message</span></td><td class="result">Reply tripped a failure marker (marker: i couldn&#x27;t). Got: Thought for 5s1 stepI checked the recent messages in the QBA-ADM QA General channel, but I couldn&#x27;t find a message with the exact content &quot;hello&quot; sent by you. Here are the messages you&#x27;ve sent recentl…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">delete-channel-message</span></td><td class="result">Thought for 4s1 stepHere are the messages you&#x27;ve sent to the QBA-ADM QA channel. Which one would you like to delete? #MessageDate &amp; Time1&quot;Hi this is the test message @Souvik Behera&quot;Aug 18, 11:43 AM2&quot;T…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">set-channel-message-reaction</span></td><td class="result">Thought for 6s2 steps✅ Thumbs up reaction added! I&#x27;ve added a 👍 reaction to the most recent message in the QBA-ADM QA channel: Message: &quot;Hi this is the test message @Souvik Behera&quot; Sent by: Puja Debna…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">unset-channel-message-reaction</span></td><td class="result">Thought for 6s1 step✅ Reaction removed! I&#x27;ve removed the 👍 thumbs up reaction from the message in the QBA-ADM QA channel: Message: &quot;Hi this is the test message @Souvik Behera&quot; Message ID: 178705343435…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">list-chats</span></td><td class="result">Thought for 4s1 stepHere are all your chats that include Souvik Behera: #Chat TypeTopic / NameMembers11:1 ChatDirect chat with Souvik BeheraSouvik Behera, You2MeetingTM PCDS Platform-Daily Standup23 m…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">get-chat-messages</span></td><td class="result">Thought for 54s6 stepsI was able to locate your 1:1 chat with Souvik Behera, but unfortunately I&#x27;ve run out of tool calls for this turn before I could fetch the messages. 😅 Here&#x27;s what I found: Chat D…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">send-chat-message</span></td><td class="result">Thought for 3s1 step✅ Direct message sent successfully! Your message &quot;Hello Souvik, automated test&quot; has been sent to Souvik Behera in your 1:1 chat. Recipient: Souvik Behera (Souvik_Behera@qbadvisory.…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">update-chat-message</span></td><td class="result">Thought for 3s1 stepHere are the messages you&#x27;ve sent to Souvik Behera recently. Which one would you like to edit? #MessageDate &amp; Time1&quot;Hello Souvik, automated test&quot;Aug 18, 11:46 AM2&quot;Hello Souvik, thi…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">delete-chat-message</span></td><td class="result">Thought for 4s1 stepHere are the messages you&#x27;ve sent to Souvik Behera. Which one would you like to delete? #MessageDate &amp; Time1&quot;Hello Souvik, automated test&quot;Aug 18, 11:46 AM2&quot;Hello Souvik, this is an…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">set-chat-message-reaction</span></td><td class="result">Thought for 7s2 steps✅ Thumbs up reaction added! I&#x27;ve added a 👍 reaction to the latest message in your chat with Souvik Behera: Message: &quot;Hello Souvik, automated test&quot; Sent by: You Time: Aug 18, 11:46…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">unset-chat-message-reaction</span></td><td class="result">Thought for 3s1 step✅ Reaction removed! I&#x27;ve removed the 👍 thumbs up reaction from the latest message in your chat with Souvik Behera: Message: &quot;Hello Souvik, automated test&quot; Message ID: 1787053591355…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">send-file-to-chat</span></td><td class="result">I&#x27;d be happy to help you share a file with Souvik Behera! However, I need a bit more information: Which file would you like to share? Do you have a file path on your local system? Or would you like me…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">list-calendar-meetings</span></td><td class="result">Thought for 6s2 stepsHere are your upcoming Teams meetings for the next week (Aug 18–25, 2026): 📅 Tuesday, August 18, 2026 TimeMeetingDuration6:00 AMDevOps status &amp; update call30 min9:00 AMWeekly Meet…</td></tr>
+        <tr class="is-fail"><td><span class="pill fail">FAIL</span></td><td><span class="cap">get-meeting-details</span></td><td class="result">Reply tripped a failure marker (marker: i couldn&#x27;t). Got: Thought for 4s2 stepsI looked through your upcoming meetings (Aug 18–25), but I couldn&#x27;t find one explicitly named &quot;QA meeting&quot;. 🤔 Here are the closest candidates — could you let me know which one you…</td></tr>
+        <tr class="is-fail"><td><span class="pill fail">FAIL</span></td><td><span class="cap">list-meeting-recordings</span></td><td class="result">Reply tripped a failure marker (marker: i couldn&#x27;t). Got: Thought for 5s1 stepI checked your upcoming meetings (Aug 18–25), but I couldn&#x27;t find one explicitly named &quot;QA meeting&quot;. 🤔 Here are the closest candidates — could you let me know which one you meant?…</td></tr>
+        <tr class="is-fail"><td><span class="pill fail">FAIL</span></td><td><span class="cap">list-meeting-attendance</span></td><td class="result">Reply tripped a failure marker (marker: i couldn&#x27;t). Got: Thought for 4s1 stepI checked your upcoming meetings (Aug 18–25), but I couldn&#x27;t find one named &quot;QBA-ADM QA Test Meeting&quot;. 🤔 Here are the closest candidates — could you let me know which one you meant…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">search-messages</span></td><td class="result">Thought for 5s1 stepI found 896 messages containing &quot;QA&quot; across all your Teams and chats. Here are the most relevant results: 📊 Summary of QA-Related Messages QBA-ADM QA Channel (Team: QBA-ADM QA) #Me…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">get-my-mentions</span></td><td class="result">Thought for 3s1 stepHere are all the messages where you were @mentioned in the last 7 days: 📬 Your Mentions (Last 168 hours) #MessageFromDate &amp; TimeLocation1&quot;Hi Puja Debnath Behera tomar qba er github…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">auth-status</span></td><td class="result">Thought for 2s1 step✅ Authentication Status: Verified You are successfully authenticated as: FieldValueNamePuja Debnath BeheraEmailPuja.Debnath@qbadvisory.comStatus✅ Authenticated Your Microsoft Graph…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">get-current-user</span></td><td class="result">Thought for 3s1 step✅ Your Current User Profile FieldValueDisplay NamePuja Debnath BeheraEmailPuja.Debnath@qbadvisory.comUser Principal NamePuja.Debnath@qbadvisory.comJob TitleSenior Consultant - QAUs…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">search-users-by-name</span></td><td class="result">Thought for 4s1 step✅ User Found: Souvik Behera FieldValueDisplay NameSouvik BeheraEmailSouvik_Behera@qbadvisory.comUser Principal NameSouvik_Behera@qbadvisory.comUser ID15520547-5fd7-4567-85c3-081676…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">search-users-by-email</span></td><td class="result">Thought for 27s2 stepsI found the user! However, there&#x27;s a slight difference in the email format: ⚠️ Email Format Difference Your SearchActual Emailsouvik.behera@qbadvisory.comSouvik_Behera@qbadvisory…</td></tr>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">get-user-details</span></td><td class="result">Thought for 11s1 step✅ Detailed User Profile: Souvik Behera FieldValueDisplay NameSouvik BeheraEmailSouvik_Behera@qbadvisory.comUser Principal NameSouvik_Behera@qbadvisory.comUser ID15520547-5fd7-4567…</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-head">
+      <h3>Teams Message</h3>
+      <div class="meter"><span style="width:100%"></span></div>
+      <div class="ratio all-pass"><b>1</b> / 1 passed</div>
+    </div>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th class="colst">Status</th><th class="colcap">Test</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pass">PASS</span></td><td><span class="cap">send teams message to souvik</span></td><td class="result">Passed.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>Whole-suite report generated from the latest recorded run.
+    Data: <code>reports/all_results.jsonl</code> (all tests) +
+    <code>reports/teams_results.jsonl</code> (Teams detail)
+    · builder: <code>utils/generate_teams_report.py</code>.</p>
+  </footer>
+
+</div>

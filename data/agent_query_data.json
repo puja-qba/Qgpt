@@ -1,0 +1,115 @@
+{
+  "model": null,
+  "queries": [
+    {
+      "name": "percentage_calculation",
+      "query": "What is 15 percent of 240?",
+      "expected_keyword": "36"
+    },
+    {
+      "name": "average_speed_word_problem",
+      "query": "A train travels 150 kilometers in 2.5 hours. What is its average speed in kilometers per hour?",
+      "expected_keyword": "60"
+    },
+    {
+      "name": "multi_step_arithmetic",
+      "query": "If a shirt costs 40 dollars and is discounted by 25 percent, what is the final price in dollars?",
+      "expected_keyword": "30"
+    },
+    {
+      "name": "date_reasoning",
+      "query": "If today is Monday, what day of the week will it be 10 days from now?",
+      "expected_keyword": "Thursday"
+    },
+    {
+      "name": "factual_capital",
+      "query": "What is the capital city of Japan?",
+      "expected_keyword": "Tokyo"
+    },
+    {
+      "name": "multi_step_word_problem",
+      "query": "A store starts with 120 apples. It sells three-fifths of them in the morning, then sells half of the remaining apples in the afternoon. How many apples are left at the end of the day?",
+      "expected_keyword": "24"
+    },
+    {
+      "name": "number_sequence",
+      "query": "What is the next number in this sequence: 2, 6, 12, 20, 30, ...?",
+      "expected_keyword": "42"
+    },
+    {
+      "name": "syllogism_reasoning",
+      "query": "All Bloops are Razzies, and all Razzies are Lazzies. Based only on that, are all Bloops definitely Lazzies? Answer yes or no.",
+      "expected_keyword": "Yes"
+    },
+    {
+      "name": "unit_conversion",
+      "query": "How many minutes are there in 3.5 hours?",
+      "expected_keyword": "210"
+    },
+    {
+      "name": "roman_numeral",
+      "query": "What is the number 49 written as a Roman numeral?",
+      "expected_keyword": "XLIX"
+    },
+    {
+      "name": "compound_interest",
+      "query": "If you invest 1000 dollars at 10 percent annual interest compounded yearly, what is the total value after 2 years in dollars?",
+      "expected_keyword": "1210"
+    },
+    {
+      "name": "sum_of_integers",
+      "query": "What is the sum of all whole numbers from 1 to 100 inclusive?",
+      "expected_keyword": "5050"
+    },
+    {
+      "name": "http_status_not_found",
+      "query": "In HTTP, which status code number means 'Not Found'?",
+      "expected_keyword": "404"
+    },
+    {
+      "name": "https_default_port",
+      "query": "What is the default TCP port number used by HTTPS?",
+      "expected_keyword": "443"
+    },
+    {
+      "name": "decimal_to_hex",
+      "query": "What is the decimal number 255 written in hexadecimal? Give the two-digit hex value.",
+      "expected_keyword": "FF"
+    },
+    {
+      "name": "decimal_to_binary",
+      "query": "What is the decimal number 10 written in binary?",
+      "expected_keyword": "1010"
+    },
+    {
+      "name": "sql_remove_all_rows",
+      "query": "Which SQL statement removes all rows from a table quickly without logging individual row deletions? Give the single keyword.",
+      "expected_keyword": "TRUNCATE"
+    },
+    {
+      "name": "binary_search_complexity",
+      "query": "What is the worst-case time complexity of binary search on a sorted array, in Big-O notation using log n?",
+      "expected_keyword": "log"
+    },
+    {
+      "name": "python_list_type",
+      "query": "In Python, what built-in data type name does the expression type([]) refer to?",
+      "expected_keyword": "list"
+    },
+    {
+      "name": "oop_hiding_details",
+      "query": "Which object-oriented programming principle describes bundling data with methods and hiding internal implementation details behind a public interface? Give the single term.",
+      "expected_keyword": "Encapsulation"
+    },
+    {
+      "name": "lifo_data_structure",
+      "query": "Which classic data structure follows a Last-In-First-Out (LIFO) ordering? Give the single word.",
+      "expected_keyword": "Stack"
+    },
+    {
+      "name": "git_history_command",
+      "query": "Which Git command displays the commit history of the current branch? Give the two-word command.",
+      "expected_keyword": "git log"
+    }
+  ]
+}

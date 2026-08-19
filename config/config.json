@@ -1,0 +1,5 @@
+{
+  "base_url": "https://qgpt-staging.qbadvisory.com/app",
+  "browser": "chromium",
+  "headless": false
+}

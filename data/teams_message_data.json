@@ -1,0 +1,8 @@
+{
+  "model": null,
+  "recipient": "Souvik Behera",
+  "message": "Hello Souvik, this is an automated test message from QGPT.",
+  "query": "Using the Microsoft Teams integration, send a chat message to Souvik Behera with exactly this text: \"Hello Souvik, this is an automated test message from QGPT.\" After sending it, reply confirming that the message was sent to Souvik Behera.",
+  "recipient_keyword": "Souvik",
+  "success_keywords": ["sent", "delivered", "message has been", "successfully", "I've sent", "I have sent"]
+}

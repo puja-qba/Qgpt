@@ -1,0 +1,22 @@
+{
+  "valid_login": {
+    "username": "puja.debnath@qbadvisory.com",
+    "password": "PDB@190121QBA"
+  },
+  "invalid_username_login": {
+    "username": "souv.chatterjee@qbadvisory.com",
+    "password": "Qba@9933;"
+  },
+  "without_username_login": {
+    "username": "",
+    "password": "Qba@9933;"
+  },
+  "invalid_password_login": {
+    "username": "puja.debnath@qbadvisory.com",
+    "password": "PDB@190121QBA;"
+  },
+  "without_password_login": {
+    "username": "souvik.chatterjee@qbadvisory.com",
+    "password": ""
+  }
+}

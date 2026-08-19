@@ -1,0 +1,1097 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.5, pytest-9.0.3, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.5', 'Platform': 'Windows-11-10.0.26200-SP0', 'Packages': {'pytest': '9.0.3', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.13.0', 'locust': '2.44.3', 'base-url': '2.1.0', 'html': '4.2.0', 'metadata': '3.1.1', 'playwright': '0.8.0', 'xdist': '3.8.0'}, 'JAVA_HOME': 'C:\\Program Files\\Java\\jre1.8.0_451\\bin', 'Base URL': ''}
+rootdir: D:\QGPT\Qgpt
+configfile: pytest.ini
+plugins: anyio-4.13.0, locust-2.44.3, base-url-2.1.0, html-4.2.0, metadata-3.1.1, playwright-0.8.0, xdist-3.8.0
+collecting ... collected 27 items
+
+tests/test_teams_feature.py::test_teams_capability[channel__list_teams] FAILED [  3%]
+tests/test_teams_feature.py::test_teams_capability[channel__list_channels] FAILED [  7%]
+tests/test_teams_feature.py::test_teams_capability[channel__send_channel_message] FAILED [ 11%]
+tests/test_teams_feature.py::test_teams_capability[channel__send_message_with_mention] FAILED [ 14%]
+tests/test_teams_feature.py::test_teams_capability[channel__update_channel_message] FAILED [ 18%]
+tests/test_teams_feature.py::test_teams_capability[channel__delete_channel_message] FAILED [ 22%]
+tests/test_teams_feature.py::test_teams_capability[channel__set_message_reaction] FAILED [ 25%]
+tests/test_teams_feature.py::test_teams_capability[channel__unset_message_reaction] FAILED [ 29%]
+tests/test_teams_feature.py::test_teams_capability[chat__list_chats] FAILED [ 33%]
+tests/test_teams_feature.py::test_teams_capability[chat__get_chat_messages] PASSED [ 37%]
+tests/test_teams_feature.py::test_teams_capability[chat__send_chat_message] PASSED [ 40%]
+tests/test_teams_feature.py::test_teams_capability[chat__update_chat_message] PASSED [ 44%]
+tests/test_teams_feature.py::test_teams_capability[chat__delete_chat_message] PASSED [ 48%]
+tests/test_teams_feature.py::test_teams_capability[chat__set_message_reaction] PASSED [ 51%]
+tests/test_teams_feature.py::test_teams_capability[chat__unset_message_reaction] PASSED [ 55%]
+tests/test_teams_feature.py::test_teams_capability[chat__send_file_to_chat] PASSED [ 59%]
+tests/test_teams_feature.py::test_teams_capability[meeting__list_calendar_meetings] PASSED [ 62%]
+tests/test_teams_feature.py::test_teams_capability[meeting__get_meeting_details] PASSED [ 66%]
+tests/test_teams_feature.py::test_teams_capability[meeting__list_meeting_recordings] PASSED [ 70%]
+tests/test_teams_feature.py::test_teams_capability[meeting__list_meeting_attendance] FAILED [ 74%]
+tests/test_teams_feature.py::test_teams_capability[discovery__search_messages] PASSED [ 77%]
+tests/test_teams_feature.py::test_teams_capability[discovery__get_my_mentions] PASSED [ 81%]
+tests/test_teams_feature.py::test_teams_capability[user__auth_status] PASSED [ 85%]
+tests/test_teams_feature.py::test_teams_capability[user__get_current_user] PASSED [ 88%]
+tests/test_teams_feature.py::test_teams_capability[user__search_users_by_name] PASSED [ 92%]
+tests/test_teams_feature.py::test_teams_capability[user__search_users_by_email] PASSED [ 96%]
+tests/test_teams_feature.py::test_teams_capability[user__get_user_details] PASSED [100%]
+
+================================== FAILURES ===================================
+_________________ test_teams_capability[channel__list_teams] __________________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-teams', 'category': 'Channel Operations', 'expect_any': ['team', 'group'], 'name': 'channel__list_teams', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85C5F3BA0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-teams', 'category': 'Channel Operations', 'expect_any': ['team', 'group'], 'name': 'channel__list_teams', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [list-teams] No agent reply within 180s for query "Could you list all the Teams groups I'm a member of?"
+
+tests\test_teams_feature.py:117: Failed
+________________ test_teams_capability[channel__list_channels] ________________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-channels', 'category': 'Channel Operations', 'expect_any': ['channel'], 'name': 'channel__list_channels', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85D98A660>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-channels', 'category': 'Channel Operations', 'expect_any': ['channel'], 'name': 'channel__list_channels', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [list-channels] No agent reply within 180s for query 'Can you list all channels in my teams?'
+
+tests\test_teams_feature.py:117: Failed
+____________ test_teams_capability[channel__send_channel_message] _____________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'send-channel-message', 'category': 'Channel Operations', 'expect_any': ['sent', 'posted', 'message', 'Q-GPT'], 'name': 'channel__send_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA78220>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'send-channel-message', 'category': 'Channel Operations', 'expect_any': ['sent', 'posted', 'message', 'Q-GPT'], 'name': 'channel__send_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [send-channel-message] No agent reply within 180s for query 'Can you send the message "This is a test message" to the QBA-ADM QA group?'
+
+tests\test_teams_feature.py:117: Failed
+__________ test_teams_capability[channel__send_message_with_mention] __________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'send-channel-message-with-mention', 'category': 'Channel Operations', 'expect_any': ['sent', 'posted', 'mention', 'souvik'], 'name': 'channel__send_message_with_mention', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA78FE0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'send-channel-message-with-mention', 'category': 'Channel Operations', 'expect_any': ['sent', 'posted', 'mention', 'souvik'], 'name': 'channel__send_message_with_mention', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [send-channel-message-with-mention] No agent reply within 180s for query 'Could you send a message "Hi this is the test message" to the QBA-ADM QA group mentioning @Souvik Behera?'
+
+tests\test_teams_feature.py:117: Failed
+___________ test_teams_capability[channel__update_channel_message] ____________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'update-channel-message', 'category': 'Channel Operations', 'expect_any': ['edit', 'updated', 'changed', 'hello', 'which message', 'which one', ...], 'name': 'channel__update_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA78CC0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'update-channel-message', 'category': 'Channel Operations', 'expect_any': ['edit', 'updated', 'changed', 'hello', 'which message', 'which one', ...], 'name': 'channel__update_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [update-channel-message] No agent reply within 180s for query 'Can you edit a message I previously sent "hello" to the QBA-ADM QA group?'
+
+tests\test_teams_feature.py:117: Failed
+___________ test_teams_capability[channel__delete_channel_message] ____________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'delete-channel-message', 'category': 'Channel Operations', 'expect_any': ['delete', 'deleted', 'removed', 'which message', 'which one', 'clarify', ...], 'name': 'channel__delete_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA79800>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'delete-channel-message', 'category': 'Channel Operations', 'expect_any': ['delete', 'deleted', 'removed', 'which message', 'which one', 'clarify', ...], 'name': 'channel__delete_channel_message', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [delete-channel-message] No agent reply within 180s for query 'Could you delete a message I sent to the QBA-ADM QA channel?'
+
+tests\test_teams_feature.py:117: Failed
+____________ test_teams_capability[channel__set_message_reaction] _____________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'set-channel-message-reaction', 'category': 'Channel Operations', 'expect_any': ['reaction', 'thumbs', 'added', 'which message', 'clarify'], 'name': 'channel__set_message_reaction', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA7A2A0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'set-channel-message-reaction', 'category': 'Channel Operations', 'expect_any': ['reaction', 'thumbs', 'added', 'which message', 'clarify'], 'name': 'channel__set_message_reaction', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [set-channel-message-reaction] No agent reply within 180s for query 'Can you add a thumbs up emoji reaction to the most recent message in the QBA-ADM QA channel?'
+
+tests\test_teams_feature.py:117: Failed
+___________ test_teams_capability[channel__unset_message_reaction] ____________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'unset-channel-message-reaction', 'category': 'Channel Operations', 'expect_any': ['reaction', 'removed', 'unset', 'which message', 'clarify'], 'name': 'channel__unset_message_reaction', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA79F80>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'unset-channel-message-reaction', 'category': 'Channel Operations', 'expect_any': ['reaction', 'removed', 'unset', 'which message', 'clarify'], 'name': 'channel__unset_message_reaction', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [unset-channel-message-reaction] No agent reply within 180s for query 'Could you remove the reaction I added to that channel message in the QBA-ADM QA channel?'
+
+tests\test_teams_feature.py:117: Failed
+___________________ test_teams_capability[chat__list_chats] ___________________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-chats', 'category': 'Direct Chat Operations', 'expect_any': ['chat', 'souvik', 'conversation'], 'name': 'chat__list_chats', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+>           agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+
+tests\test_teams_feature.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\agent_page.py:64: in wait_for_response
+    self.page.wait_for_function(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\sync_api\_generated.py:12436: in wait_for_function
+    self._sync(
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_page.py:1136: in wait_for_function
+    return await self._main_frame.wait_for_function(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_frame.py:910: in wait_for_function
+    await self._channel.send("waitForFunction", self._timeout, params)
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <playwright._impl._connection.Connection object at 0x000001C85C63E7B0>
+cb = <function Channel.send.<locals>.<lambda> at 0x000001C85DA7AAC0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_function: Timeout 180000ms exceeded.
+
+C:\Users\puja.debnath\AppData\Roaming\Python\Python313\site-packages\playwright\_impl\_connection.py:559: TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-chats', 'category': 'Direct Chat Operations', 'expect_any': ['chat', 'souvik', 'conversation'], 'name': 'chat__list_chats', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+>           pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+E           Failed: [list-chats] No agent reply within 180s for query 'Can you list all my chats with Souvik Behera?'
+
+tests\test_teams_feature.py:117: Failed
+___________ test_teams_capability[meeting__list_meeting_attendance] ___________
+
+agent_session = <pages.agent_page.AgentPage object at 0x000001C85C6D63C0>
+scenario = {'capability': 'list-meeting-attendance', 'category': 'Meeting Operations', 'expect_any': ['attendance', 'report', 'meeting', 'no attendance'], 'name': 'meeting__list_meeting_attendance', ...}
+
+    @pytest.mark.parametrize(
+        "scenario",
+        teams_data["scenarios"],
+        ids=[s["name"] for s in teams_data["scenarios"]],
+    )
+    def test_teams_capability(agent_session, scenario):
+        """Drive one Teams capability through the agent and verify the reply.
+    
+        A scenario passes when the agent returns a non-empty reply that
+        (a) contains no hard failure marker (e.g. not-authenticated / error), and
+        (b) contains at least one expected keyword for that capability. For
+        state-dependent actions (edit/delete/react on an unspecified message) the
+        expected keywords also accept a clarifying question as a valid reply.
+        """
+        agent_page = agent_session
+    
+        query = scenario["query"]
+        expect_any = scenario["expect_any"]
+        fail_markers = teams_data.get("fail_markers", [])
+    
+        agent_page.ask_query(query)
+    
+        try:
+            agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
+        except PlaywrightTimeoutError:
+            _record_result(
+                scenario, "NO_RESPONSE",
+                f"No reply within {RESPONSE_TIMEOUT // 1000}s",
+            )
+            pytest.fail(
+                f"[{scenario['capability']}] No agent reply within "
+                f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
+            )
+    
+        response = agent_page.get_response_text() or ""
+        if not response.strip():
+            _record_result(scenario, "EMPTY", "Empty response")
+            pytest.fail(f"[{scenario['capability']}] Agent returned an empty response")
+    
+        lowered = response.lower()
+    
+        hit_fail = next((m for m in fail_markers if m.lower() in lowered), None)
+        if hit_fail is not None:
+            _record_result(scenario, "FAIL_MARKER", f"marker: {hit_fail}", response)
+>           pytest.fail(
+                f"[{scenario['capability']}] Agent reply signals failure "
+                f"('{hit_fail}') for query {query!r}, got: {response!r}"
+            )
+E           Failed: [list-meeting-attendance] Agent reply signals failure ('i couldn't') for query 'Can you get the attendance report for the QBA-ADM QA Test Meeting?', got: 'Thought for 5s5 stepsI searched through all your meetings from August 1–21, 2026, but I couldn\'t find a meeting explicitly named "QBA-ADM QA Test Meeting". Here are the closest QA/testing-related meetings I found:\n#Meeting NameDateTime1Testing Approach for Product Development CycleAug 45:00–5:30 AM2QGPT Testing DemoAug 65:30–6:00 AM3QGPT - Discussion related to in-scope feature for the regression suiteAug 124:30–5:30 AM\nCould you clarify which meeting you\'re referring to? Or would you like me to:\n\nSearch a wider date range (e.g., July or earlier) for the "QBA-ADM QA Test Meeting"?\nRetrieve attendance for one of the testing-related meetings listed above?\n✓ z-ai/glm-5.2⏱ 4060 ms12:45 PMGLM 5.2'
+
+tests\test_teams_feature.py:132: Failed
+------- Generated html report: file:///D:/QGPT/Qgpt/reports/report.html -------
+=========================== short test summary info ===========================
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__list_teams]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__list_channels]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__send_channel_message]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__send_message_with_mention]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__update_channel_message]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__delete_channel_message]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__set_message_reaction]
+FAILED tests/test_teams_feature.py::test_teams_capability[channel__unset_message_reaction]
+FAILED tests/test_teams_feature.py::test_teams_capability[chat__list_chats]
+FAILED tests/test_teams_feature.py::test_teams_capability[meeting__list_meeting_attendance]
+================= 10 failed, 17 passed in 1846.66s (0:30:46) ==================

@@ -1,0 +1,205 @@
+{
+  "model": null,
+  "fail_markers": [
+    "isn't authenticated",
+    "is not authenticated",
+    "authenticate with the Teams MCP",
+    "i couldn't",
+    "i can't",
+    "unable to",
+    "i was unable",
+    "something went wrong",
+    "an error occurred"
+  ],
+  "scenarios": [
+    {
+      "name": "channel__list_teams",
+      "category": "Channel Operations",
+      "capability": "list-teams",
+      "query": "Could you list all the Teams groups I'm a member of?",
+      "expect_any": ["team", "group"]
+    },
+    {
+      "name": "channel__list_channels",
+      "category": "Channel Operations",
+      "capability": "list-channels",
+      "query": "Can you list all channels in my teams?",
+      "expect_any": ["channel"]
+    },
+    {
+      "name": "channel__send_channel_message",
+      "category": "Channel Operations",
+      "capability": "send-channel-message",
+      "query": "Can you send the message \"This is a test message\" to the QBA-ADM QA group?",
+      "expect_any": ["sent", "posted", "message", "Q-GPT"]
+    },
+    {
+      "name": "channel__send_message_with_mention",
+      "category": "Channel Operations",
+      "capability": "send-channel-message-with-mention",
+      "query": "Could you send a message \"Hi this is the test message\" to the QBA-ADM QA group mentioning @Souvik Behera?",
+      "expect_any": ["sent", "posted", "mention", "souvik"]
+    },
+    {
+      "name": "channel__update_channel_message",
+      "category": "Channel Operations",
+      "capability": "update-channel-message",
+      "query": "Can you edit a message I previously sent \"hello\" to the QBA-ADM QA group?",
+      "expect_any": ["edit", "updated", "changed", "hello", "which message", "which one", "clarify", "could you specify"]
+    },
+    {
+      "name": "channel__delete_channel_message",
+      "category": "Channel Operations",
+      "capability": "delete-channel-message",
+      "query": "Could you delete a message I sent to the QBA-ADM QA channel?",
+      "expect_any": ["delete", "deleted", "removed", "which message", "which one", "clarify", "could you specify"]
+    },
+    {
+      "name": "channel__set_message_reaction",
+      "category": "Channel Operations",
+      "capability": "set-channel-message-reaction",
+      "query": "Can you add a thumbs up emoji reaction to the most recent message in the QBA-ADM QA channel?",
+      "expect_any": ["reaction", "thumbs", "added", "which message", "clarify"]
+    },
+    {
+      "name": "channel__unset_message_reaction",
+      "category": "Channel Operations",
+      "capability": "unset-channel-message-reaction",
+      "query": "Could you remove the reaction I added to that channel message in the QBA-ADM QA channel?",
+      "expect_any": ["reaction", "removed", "unset", "which message", "clarify"]
+    },
+    {
+      "name": "chat__list_chats",
+      "category": "Direct Chat Operations",
+      "capability": "list-chats",
+      "query": "Can you list all my chats with Souvik Behera?",
+      "expect_any": ["chat", "souvik", "conversation"]
+    },
+    {
+      "name": "chat__get_chat_messages",
+      "category": "Direct Chat Operations",
+      "capability": "get-chat-messages",
+      "query": "Could you retrieve the conversation history from my Souvik Behera chat?",
+      "expect_any": ["message", "conversation", "history", "souvik"]
+    },
+    {
+      "name": "chat__send_chat_message",
+      "category": "Direct Chat Operations",
+      "capability": "send-chat-message",
+      "query": "Can you send a direct message \"Hello Souvik, automated test\" to Souvik Behera?",
+      "expect_any": ["sent", "message", "souvik"]
+    },
+    {
+      "name": "chat__update_chat_message",
+      "category": "Direct Chat Operations",
+      "capability": "update-chat-message",
+      "query": "Can you edit a direct message you previously sent to Souvik Behera?",
+      "expect_any": ["edit", "updated", "changed", "which message", "which one", "clarify", "could you specify"]
+    },
+    {
+      "name": "chat__delete_chat_message",
+      "category": "Direct Chat Operations",
+      "capability": "delete-chat-message",
+      "query": "Could you delete a message from my direct chat with Souvik Behera?",
+      "expect_any": ["delete", "deleted", "removed", "which message", "which one", "clarify", "could you specify"]
+    },
+    {
+      "name": "chat__set_message_reaction",
+      "category": "Direct Chat Operations",
+      "capability": "set-chat-message-reaction",
+      "query": "Can you add a thumbs up emoji reaction to the latest message in my chat with Souvik Behera?",
+      "expect_any": ["reaction", "added", "thumbs", "which message", "clarify"]
+    },
+    {
+      "name": "chat__unset_message_reaction",
+      "category": "Direct Chat Operations",
+      "capability": "unset-chat-message-reaction",
+      "query": "Could you remove the reaction I added to the latest message in my chat with Souvik Behera?",
+      "expect_any": ["reaction", "removed", "unset", "which message", "clarify"]
+    },
+    {
+      "name": "chat__send_file_to_chat",
+      "category": "Direct Chat Operations",
+      "capability": "send-file-to-chat",
+      "query": "Can you share a file to Souvik Behera in a Teams chat?",
+      "expect_any": ["file", "sent", "shared", "souvik", "which file", "clarify", "could you specify"]
+    },
+    {
+      "name": "meeting__list_calendar_meetings",
+      "category": "Meeting Operations",
+      "capability": "list-calendar-meetings",
+      "query": "Can you list my upcoming Teams meetings for the next week?",
+      "expect_any": ["meeting", "calendar", "no meetings", "upcoming"]
+    },
+    {
+      "name": "meeting__get_meeting_details",
+      "category": "Meeting Operations",
+      "capability": "get-meeting-details",
+      "query": "Could you get detailed information about the QA meeting?",
+      "expect_any": ["meeting", "QBA-ADM QA", "detail", "no meeting", "not find"]
+    },
+    {
+      "name": "meeting__list_meeting_recordings",
+      "category": "Meeting Operations",
+      "capability": "list-meeting-recordings",
+      "query": "Can you list all recordings from the QA meeting?",
+      "expect_any": ["recording", "meeting", "no recording"]
+    },
+    {
+      "name": "meeting__list_meeting_attendance",
+      "category": "Meeting Operations",
+      "capability": "list-meeting-attendance",
+      "query": "Can you get the attendance report for the QBA-ADM QA Test Meeting?",
+      "expect_any": ["attendance", "report", "meeting", "no attendance"]
+    },
+    {
+      "name": "discovery__search_messages",
+      "category": "Discovery & Search",
+      "capability": "search-messages",
+      "query": "Can you search for messages containing 'QA' across all Teams and chats?",
+      "expect_any": ["QA", "message", "search", "found", "no messages", "result"]
+    },
+    {
+      "name": "discovery__get_my_mentions",
+      "category": "Discovery & Search",
+      "capability": "get-my-mentions",
+      "query": "Could you show me all messages where I was @mentioned?",
+      "expect_any": ["mention", "no mentions", "message"]
+    },
+    {
+      "name": "user__auth_status",
+      "category": "User Management",
+      "capability": "auth-status",
+      "query": "Can you verify my authentication status?",
+      "expect_any": ["authenticat", "signed in", "connected", "logged in"]
+    },
+    {
+      "name": "user__get_current_user",
+      "category": "User Management",
+      "capability": "get-current-user",
+      "query": "Could you retrieve my current user profile information?",
+      "expect_any": ["profile", "user", "email", "name", "account"]
+    },
+    {
+      "name": "user__search_users_by_name",
+      "category": "User Management",
+      "capability": "search-users-by-name",
+      "query": "Can you search for users named 'souvik behera'?",
+      "expect_any": ["souvik", "user", "found", "no users"]
+    },
+    {
+      "name": "user__search_users_by_email",
+      "category": "User Management",
+      "capability": "search-users-by-email",
+      "query": "Could you find the user with the email address souvik.behera@qbadvisory.com?",
+      "expect_any": ["souvik", "user", "email", "found", "no user", "not find"]
+    },
+    {
+      "name": "user__get_user_details",
+      "category": "User Management",
+      "capability": "get-user-details",
+      "query": "Can you get detailed information about the user souvik behera?",
+      "expect_any": ["souvik", "user", "detail", "profile", "no user", "not find"]
+    }
+  ]
+}
