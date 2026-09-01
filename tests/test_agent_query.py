@@ -21,6 +21,7 @@ def _response_contains(response, keyword):
     return keyword in normalized
 
 
+# Load run config, login credentials, and the agent query cases/expected keywords.
 config = CommonUtils.read_json("config/config.json")
 login_data = CommonUtils.read_json("data/input_data.json")
 agent_data = CommonUtils.read_json("data/agent_query_data.json")
@@ -29,11 +30,13 @@ agent_data = CommonUtils.read_json("data/agent_query_data.json")
 @pytest.fixture(scope="module")
 def agent_session():
     """Log in once and hand back an AgentPage reused across all queries."""
+    # Start Playwright and pick the browser/headless mode from config.
     playwright = sync_playwright().start()
 
     browser_name = config["browser"]
     headless = config["headless"]
 
+    # Launch the configured browser engine.
     if browser_name == "chromium":
         browser = playwright.chromium.launch(headless=headless)
     elif browser_name == "firefox":
@@ -41,6 +44,7 @@ def agent_session():
     else:
         browser = playwright.webkit.launch(headless=headless)
 
+    # Open a fresh page and navigate to the app under test.
     page = browser.new_page()
     page.goto(config["base_url"])
 
@@ -63,23 +67,28 @@ def agent_session():
             f"selector shows {agent_page.get_selected_model()!r}"
         )
 
+    # Hand the ready AgentPage to the tests, then tear the browser down after.
     yield agent_page
 
     browser.close()
     playwright.stop()
 
 
+# Run the test once per query case defined in the data file.
 @pytest.mark.parametrize(
     "case",
     agent_data["queries"],
     ids=[case["name"] for case in agent_data["queries"]],
 )
 def test_ask_query_to_agent(agent_session, case):
+    # Reuse the shared, already-logged-in agent page.
     agent_page = agent_session
 
+    # Pull this case's query and the keyword the reply is expected to contain.
     query = case["query"]
     expected_keyword = case["expected_keyword"]
 
+    # Submit the query and wait for the agent's streamed reply to finish.
     agent_page.ask_query(query)
     agent_page.wait_for_response()
 

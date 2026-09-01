@@ -20,6 +20,8 @@ RESPONSE_TIMEOUT = 180000
 RESULTS_FILE = os.path.join("reports", "teams_results.jsonl")
 
 
+# Append one scenario's outcome (status, detail, timing, trimmed reply) as a
+# JSON line the report generator later turns into a working/not-working table.
 def _record_result(scenario, status, detail, response="", duration=None):
     os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
     row = {
@@ -37,6 +39,7 @@ def _record_result(scenario, status, detail, response="", duration=None):
         fh.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+# Load run config, login credentials, and the Teams scenario definitions.
 config = CommonUtils.read_json("config/config.json")
 login_data = CommonUtils.read_json("data/input_data.json")
 teams_data = CommonUtils.read_json("data/teams_feature_data.json")
@@ -49,11 +52,13 @@ def agent_session():
     The Teams MCP integration must already be authenticated for the QGPT
     account under test; these scenarios drive the agent's Teams tools.
     """
+    # Start Playwright and read the browser/headless settings from config.
     playwright = sync_playwright().start()
 
     browser_name = config["browser"]
     headless = config["headless"]
 
+    # Launch the configured browser engine.
     if browser_name == "chromium":
         browser = playwright.chromium.launch(headless=headless)
     elif browser_name == "firefox":
@@ -66,15 +71,18 @@ def agent_session():
     # wait for DOM content instead, which fires reliably on staging.
     page.goto(config["base_url"], wait_until="domcontentloaded", timeout=60000)
 
+    # Log in once with valid credentials for the whole module.
     login_page = LoginPage(page)
     username = login_data["valid_login"]["username"]
     password = login_data["valid_login"]["password"]
     login_page.login(username, password)
 
+    # Fail fast if login didn't reach the dashboard.
     assert login_page.is_dashboard_visible(), "Login failed - dashboard not visible"
 
     agent_page = AgentPage(page)
 
+    # If a model is configured, switch to it and confirm the switch took effect.
     model = teams_data.get("model")
     if model:
         agent_page.select_model(model)
@@ -83,12 +91,14 @@ def agent_session():
             f"selector shows {agent_page.get_selected_model()!r}"
         )
 
+    # Hand the ready AgentPage to the tests, then tear the browser down after.
     yield agent_page
 
     browser.close()
     playwright.stop()
 
 
+# Run the test once per Teams scenario defined in the data file.
 @pytest.mark.parametrize(
     "scenario",
     teams_data["scenarios"],
@@ -103,15 +113,19 @@ def test_teams_capability(agent_session, scenario):
     state-dependent actions (edit/delete/react on an unspecified message) the
     expected keywords also accept a clarifying question as a valid reply.
     """
+    # Reuse the shared, already-logged-in agent page.
     agent_page = agent_session
 
+    # Pull this scenario's query, its accepted keywords, and hard-failure markers.
     query = scenario["query"]
     expect_any = scenario["expect_any"]
     fail_markers = teams_data.get("fail_markers", [])
 
+    # Submit the query and time how long the whole exchange takes.
     start = time.time()
     agent_page.ask_query(query)
 
+    # Wait for the reply; record NO_RESPONSE and fail if it never arrives in time.
     try:
         agent_page.wait_for_response(timeout=RESPONSE_TIMEOUT)
     except PlaywrightTimeoutError:
@@ -125,13 +139,16 @@ def test_teams_capability(agent_session, scenario):
             f"{RESPONSE_TIMEOUT // 1000}s for query {query!r}"
         )
 
+    # Read the reply text; record EMPTY and fail if it's blank.
     response = agent_page.get_response_text() or ""
     if not response.strip():
         _record_result(scenario, "EMPTY", "Empty response", duration=time.time() - start)
         pytest.fail(f"[{scenario['capability']}] Agent returned an empty response")
 
+    # Compare case-insensitively for both failure markers and expected keywords.
     lowered = response.lower()
 
+    # If the reply contains a known failure marker, record FAIL_MARKER and fail.
     hit_fail = next((m for m in fail_markers if m.lower() in lowered), None)
     if hit_fail is not None:
         _record_result(scenario, "FAIL_MARKER", f"marker: {hit_fail}", response, duration=time.time() - start)
@@ -140,6 +157,7 @@ def test_teams_capability(agent_session, scenario):
             f"('{hit_fail}') for query {query!r}, got: {response!r}"
         )
 
+    # Require at least one expected keyword; record NO_KEYWORD and fail if none match.
     matched = next((kw for kw in expect_any if kw.lower() in lowered), None)
     if matched is None:
         _record_result(scenario, "NO_KEYWORD", f"expected one of {expect_any}", response, duration=time.time() - start)
@@ -148,4 +166,5 @@ def test_teams_capability(agent_session, scenario):
             f"reply for query {query!r}, got: {response!r}"
         )
 
+    # All checks passed: record the successful scenario with the matched keyword.
     _record_result(scenario, "PASS", f"matched: {matched}", response, duration=time.time() - start)
