@@ -6,6 +6,8 @@ from pages.base_page import BasePage
 class AgentPage(BasePage):
     """Page object for the Q-GPT chat/agent screen shown after login."""
 
+    # Locators for the chat input box, the agent's reply bubbles, the model
+    # selector dropdown, and the model-search field inside that dropdown.
     CHAT_INPUT = "#onyx-chat-input-textarea"
     AI_MESSAGE = "//div[@data-testid='onyx-ai-message']"
     MODEL_SELECTOR = "[data-testid='model-selector']"

@@ -6,6 +6,7 @@ from pages.agent_page import AgentPage
 from utils.common import CommonUtils
 
 
+# Load run config, login credentials, and the Teams message test data.
 config = CommonUtils.read_json("config/config.json")
 login_data = CommonUtils.read_json("data/input_data.json")
 teams_data = CommonUtils.read_json("data/teams_message_data.json")
@@ -14,11 +15,13 @@ teams_data = CommonUtils.read_json("data/teams_message_data.json")
 @pytest.fixture(scope="module")
 def agent_session():
     """Log in once and hand back an AgentPage for the Teams message test."""
+    # Start Playwright and read the browser/headless settings from config.
     playwright = sync_playwright().start()
 
     browser_name = config["browser"]
     headless = config["headless"]
 
+    # Launch the configured browser engine.
     if browser_name == "chromium":
         browser = playwright.chromium.launch(headless=headless)
     elif browser_name == "firefox":
@@ -26,6 +29,7 @@ def agent_session():
     else:
         browser = playwright.webkit.launch(headless=headless)
 
+    # Open a fresh page and navigate to the app under test.
     page = browser.new_page()
     page.goto(config["base_url"])
 
@@ -35,6 +39,7 @@ def agent_session():
     password = login_data["valid_login"]["password"]
     login_page.login(username, password)
 
+    # Fail fast if login didn't reach the dashboard.
     assert login_page.is_dashboard_visible(), "Login failed - dashboard not visible"
 
     agent_page = AgentPage(page)
@@ -48,6 +53,7 @@ def agent_session():
             f"selector shows {agent_page.get_selected_model()!r}"
         )
 
+    # Hand the ready AgentPage to the test, then tear the browser down after.
     yield agent_page
 
     browser.close()
@@ -58,15 +64,19 @@ def test_send_teams_message_to_souvik(agent_session):
     """Ask the QGPT agent to send a Teams message to Souvik Behera via the
     Microsoft Teams integration, and verify it confirms the message was sent.
     """
+    # Reuse the shared, already-logged-in agent page.
     agent_page = agent_session
 
+    # Pull the recipient, the keyword expected in the reply, and success phrases.
     recipient = teams_data["recipient"]
     recipient_keyword = teams_data["recipient_keyword"]
     success_keywords = teams_data["success_keywords"]
 
+    # Submit the "send message" query and wait for the agent's reply.
     agent_page.ask_query(teams_data["query"])
     agent_page.wait_for_response()
 
+    # The reply must be non-empty.
     response = agent_page.get_response_text()
     assert response and response.strip(), "Agent returned an empty response"
 

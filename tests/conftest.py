@@ -7,6 +7,7 @@ from utils.common import CommonUtils
 from utils.generate_teams_report import generate_report
 
 
+# Load the shared run config (browser, headless, base_url) used by fixtures below.
 config = CommonUtils.read_json("config/config.json")
 
 # Generic per-test results for ALL tests (every suite), consumed by the report
@@ -21,14 +22,17 @@ _GROUPS = {
     "test_teams_message": "Teams Message",
 }
 
+# Map pytest's raw outcome words to the short status labels used in the report.
 _STATUS = {"passed": "PASS", "failed": "FAIL", "skipped": "SKIP"}
 
 
+# Derive the report group name from a test's nodeid (file name -> suite group).
 def _group_for(nodeid):
     fname = nodeid.split("::", 1)[0].rsplit("/", 1)[-1].replace(".py", "")
     return _GROUPS.get(fname, _pretty_group(fname))
 
 
+# Fallback: turn an unknown "test_some_thing" file name into a readable "Some Thing".
 def _pretty_group(fname):
     return fname.replace("test_", "").replace("_", " ").strip().title() or "Other"
 
@@ -73,14 +77,18 @@ def _record_generic(report, status):
         pass
 
 
+# Per-test fixture: launch a browser, hand the test a page, then clean up
+# (capturing a screenshot on failure) after the test finishes.
 @pytest.fixture(scope="function")
 def setup(request):
 
+    # Start Playwright and read the desired browser/headless settings.
     playwright = sync_playwright().start()
 
     browser_name = config["browser"]
     headless = config["headless"]
 
+    # Launch the configured browser engine.
     if browser_name == "chromium":
         browser = playwright.chromium.launch(headless=headless)
 
@@ -90,12 +98,15 @@ def setup(request):
     else:
         browser = playwright.webkit.launch(headless=headless)
 
+    # Open a page and navigate to the app under test.
     page = browser.new_page()
 
     page.goto(config["base_url"])
 
+    # Give the page to the test; everything below runs during teardown.
     yield page
 
+    # On failure, save a screenshot named after the test for debugging.
     if request.node.rep_call.failed:
 
         if not os.path.exists("screenshots"):
@@ -105,10 +116,13 @@ def setup(request):
 
         page.screenshot(path=screenshot_path)
 
+    # Always close the browser and stop Playwright.
     browser.close()
     playwright.stop()
 
 
+# Hook that stashes each test phase's report on the item so the fixture above
+# can check request.node.rep_call.failed during teardown.
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
 
